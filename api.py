@@ -14,25 +14,29 @@ client=OpenAI()
 
 assistant = client.beta.assistants.create(
   name="Math Tutor",
-  instructions="You are a personal math tutor. Write and run code to answer math questions.",
-  tools=[{"type": "code_interpreter"}],
+  instructions="You are a personal math tutor. Write and run code to answer math questions.", #Instructions for decision later
+  tools=[{"type": "code_interpreter"}], #File search
   model="gpt-4o",
 )
 
+# Create thread
 thread = client.beta.threads.create()
 
+# Send message to assistant
 message = client.beta.threads.messages.create(
   thread_id=thread.id,
   role="user",
   content="I need to solve the equation `3x + 11 = 14`. Can you help me?"
 )
 
+# Run till completed
 run = client.beta.threads.runs.create_and_poll(
   thread_id=thread.id,
   assistant_id=assistant.id,
   instructions="Please address the user as Jane Doe. The user has a premium account."
 )
 
+# Check if completed
 if run.status == 'completed': 
   # Retrieve all messages in the thread and convert to a list
   messages = list(client.beta.threads.messages.list(thread_id=thread.id))
