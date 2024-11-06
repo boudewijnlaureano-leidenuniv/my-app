@@ -1,1 +1,2 @@
-ja toch
+openai
+python-dotenv
