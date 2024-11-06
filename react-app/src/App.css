@@ -1,0 +1,72 @@
+.App {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.App-header {
+  background-color: #e76224;
+  background-image: linear-gradient(43deg, #e76224 0%, #ed8a21 46%, #FFCC70 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+}
+
+.upload-box {
+  background-color: white;
+  padding: 30px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+
+.logo {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+.header-content h2 {
+  font-size: 1.2em;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Hide the actual file input */
+.file-input {
+  display: none;
+}
+
+/* Style the custom file upload button */
+.custom-file-upload {
+  margin-top: 20px;
+  padding: 12px 12px;
+  border-radius: 25px;
+  border: none;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  background-color: #ed8a21;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+  background-color: #e76224;
+  transform: scale(1.02);
+}
+
+.custom-file-upload:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(231, 98, 36, 0.3);
+}
