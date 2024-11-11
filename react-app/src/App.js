@@ -1,14 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import UploadPage from './UploadPage';
-import ResultPage from './ResultPage';
+import UploadAndResultPage from './UploadAndResultPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<UploadPage />} />
-        <Route path="/result" element={<ResultPage />} />
+        <Route path="/" element={<UploadAndResultPage />} />
       </Routes>
     </Router>
   );

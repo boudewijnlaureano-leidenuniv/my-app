@@ -5,6 +5,7 @@
     width: 25px;
     height: 25px;
     animation: spinner 1.8s linear infinite;
+    margin: 10px;
   }
   
   @keyframes spinner {
