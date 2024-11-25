@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import NNLogo from '../src/NN_Logo.png';
 import Loader from './Loader';
 import { IoIosArrowBack } from "react-icons/io";
+import AnimatedPercentage from './animatedPercentage';
 import './App.css';
 
 function UploadAndResultPage() {
@@ -68,7 +69,7 @@ function UploadAndResultPage() {
         {(!loading && !outputText) && (
           <div className="header-content">
             <img src={NNLogo} alt="NN Logo" className="logo" />
-            <h2>Upload your .txt File</h2>
+            <h2>Upload your .zip</h2>
           </div>
         )}
 
@@ -91,6 +92,9 @@ function UploadAndResultPage() {
         ) : (
           <div className="result-text">
             <p>{outputText}</p>
+            <div className='animated-percentage'>
+              <AnimatedPercentage maxPercentage={75} animationDuration={2000} />
+            </div>
           </div>
         )}
       </div>
