@@ -181,7 +181,8 @@ def format_results_readable(results, output_file="analysis_results.json"):
 
 
 if __name__ == "__main__":
-    zip_file = "/Users/mac/Downloads/Leiden2024.zip"  # Replace with the actual zip file path
+    # zip_file = "C:/Users/Boudewijn/Downloads/Leiden2024.zip"  
+    zip_file = "/Users/mac/Downloads/Leiden2024.zip"
     questions = [
         "Does the repository contain social scoring in any shape or form?",
         "Does the repository include models that can manipulate the user?",
