@@ -1,6 +1,6 @@
 {
     "readme.txt": {
-        "type": "txt",
+        "type": "txt",    
         "responses": {
             "Does the repository contain social scoring in any shape or form?": "No: The file content does not mention social scoring in any shape or form. It only references internal customer data, policy data, and external sociodemographic data at the zipcode level for predicting customer churn. There is no indication or mention of social scoring methodologies or data being used.",
             "Does the repository include models that can manipulate the user?": "No: The file content does not indicate that it includes models that can manipulate the user. The described model's objective is focused on predicting customer churn based on historical data for insurance products. There is no mention or implication of the model being designed to influence or manipulate user behavior.",

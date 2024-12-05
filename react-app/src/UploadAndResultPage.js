@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import NNLogo from '../src/NN_Logo.png';
 import Loader from './Loader';
 import { IoIosArrowBack } from "react-icons/io";
-import AnimatedPercentage from './animatedPercentage';
 import './App.css';
 
 function UploadAndResultPage() {
   const [loading, setLoading] = useState(false);
-  const [outputText, setOutputText] = useState('');
+  const [outputJson, setOutputJson] = useState(null); // Store JSON response
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
+    console.log(file)
     if (!file) return;
 
     setLoading(true);
@@ -18,13 +18,13 @@ function UploadAndResultPage() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5000/upload', {
+      const response = await fetch('http://localhost:5000/analyze', {
         method: 'POST',
-        body: formData,
+        body: formData
       });
 
       if (!response.ok) {
-        console.error(`Fetch error: ${response.status} - ${response.statusText}`);
+        console.error(`Error pointer: Fetch error: ${response.status} - ${response.statusText}`);
         setLoading(false);
         return;
       }
@@ -33,7 +33,7 @@ function UploadAndResultPage() {
       if (data.output) {
         setTimeout(() => {
           setLoading(false);
-          setOutputText(data.output);
+          setOutputJson(data.output); // Store raw JSON
         }, 2000);
       } else {
         console.error("Error received from server:", data.error);
@@ -48,32 +48,32 @@ function UploadAndResultPage() {
 
   const resetPage = () => {
     setLoading(false);
-    setOutputText('');
+    setOutputJson(null);
   };
 
   return (
     <header className="App-header">
       <div
         className={`upload-box ${
-          loading ? 'loading' : outputText ? 'expanded' : ''
+          loading ? 'loading' : outputJson ? 'expanded' : ''
         }`}
       >
         <div className="top-flex-container">
-          {outputText && (
+          {outputJson && (
             <button onClick={resetPage} className="reset-button">
               <IoIosArrowBack size={22} />
             </button>
           )}
         </div>
 
-        {(!loading && !outputText) && (
+        {(!loading && !outputJson) && (
           <div className="header-content">
             <img src={NNLogo} alt="NN Logo" className="logo" />
             <h2>Upload your .zip</h2>
           </div>
         )}
 
-        {!loading && !outputText ? (
+        {!loading && !outputJson ? (
           <>
             <label htmlFor="file-upload" className="custom-file-upload">
               Choose File
@@ -81,7 +81,7 @@ function UploadAndResultPage() {
             <input
               id="file-upload"
               type="file"
-              accept=".txt"
+              accept=".txt,.zip" // Allow .txt and .zip
               className="file-input"
               onChange={handleFileChange}
               style={{ display: 'none' }}
@@ -90,11 +90,11 @@ function UploadAndResultPage() {
         ) : loading ? (
           <Loader />
         ) : (
-          <div className="result-text">
-            <p>{outputText}</p>
-            <div className='animated-percentage'>
-              <AnimatedPercentage maxPercentage={75} animationDuration={2000} />
-            </div>
+          <div className="result-json">
+            <h3>Analysis Result (Raw JSON):</h3>
+            <pre style={{ textAlign: 'left', backgroundColor: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
+              {JSON.stringify(outputJson, null, 2)}
+            </pre>
           </div>
         )}
       </div>
