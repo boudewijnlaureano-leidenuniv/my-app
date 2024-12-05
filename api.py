@@ -24,9 +24,10 @@ CONFIG_EXTENSIONS = {'.yaml', '.yml', '.json', '.env'}
 OpenAI.api_key = API_KEY
 client = OpenAI()
 
+if not os.path.exists('tmp'):
+    os.makedirs('tmp')
 
 def extract_zip(file_path, extract_to="repo_contents"):
-    """Extract a zip file to a specific directory."""
     try:
         if not os.path.exists(extract_to):
             os.makedirs(extract_to)
@@ -35,11 +36,10 @@ def extract_zip(file_path, extract_to="repo_contents"):
         return extract_to
     except Exception as e:
         print(f"Error extracting {file_path}: {e}")
-        sys.exit(1)
+        return None
 
 
 def read_file(file_path):
-    """Read the content of a file."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             return file.read()
@@ -124,6 +124,7 @@ def send_message_to_assistant(thread_id, assistant_id, file_type, file_content, 
     except Exception as e:
         print(f"Error communicating with assistant: {e}")
         return "Error occurred while processing."
+    
 def clean_response(response):
     """
     Extract the concise "Yes:" or "No:" response along with its explanation from the provided string.
@@ -135,42 +136,25 @@ def clean_response(response):
     return "The response does not contain a clear Yes or No with an explanation."
 
 def process_repository(zip_path, assistant_id, thread_id, questions):
-    """Process the repository and analyze its files."""
     extracted_path = extract_zip(zip_path)
-    results = {}
+    if extracted_path is None:
+        return {"error": "Failed to extract the ZIP file."}
 
+    results = {}
     for root, _, files in os.walk(extracted_path):
         for file in files:
             file_path = os.path.join(root, file)
             ext = os.path.splitext(file)[1]
 
-            # Skip unsupported file types
-            if ext not in CODE_EXTENSIONS | DOC_EXTENSIONS | CONFIG_EXTENSIONS:
-                print(f"Skipping unsupported file type: {file}")
-                continue
-
+            # Hier kunnen we verder gaan met de verwerking van de bestanden
             file_content = read_file(file_path)
-            if not file_content:
-                print(f"Skipping empty or unreadable file: {file_path}")
-                continue
+            if file_content:
+                # Verzend berichten naar GPT (deze code is voor een ander deel van je project)
+                results[file] = {
+                    "type": ext.lstrip("."),
+                    "content": file_content[:100]  # Geef de eerste 100 tekens van het bestand weer
+                }
 
-            print(f"Processing file: {file}")
-            responses = {}
-            for question in questions:
-                print(f"Asking question: '{question}'")
-                raw_response = send_message_to_assistant(thread_id, assistant_id, ext.lstrip("."), file_content, question)
-                print(f"Received raw response: {raw_response}")
-                
-                # Clean the raw response
-                cleaned_response = clean_response(raw_response)
-                print(f"Cleaned response: {cleaned_response}")
-                
-                responses[question] = cleaned_response
-
-            results[file] = {
-                "type": ext.lstrip("."),
-                "responses": responses
-            }
     return results
 
 
@@ -195,46 +179,36 @@ def analyze_repository():
         if file.filename == '':
             return jsonify({'error': 'No file selected'}), 400
 
-             # Validate the file type
+        # Validate the file type
         if not file.filename.endswith('.zip'):
             return jsonify({'error': 'Only .zip files are supported.'}), 400
 
         filepath = os.path.join(os.getcwd(), 'tmp', file.filename)
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)  
         file.save(filepath)
-        zip_file = filepath.replace(os.sep, '/')
 
-
-
-    
+        # Extract ZIP and process repository
         questions = [
             "Does the repository contain social scoring in any shape or form?",
-        "Does the repository include models that can manipulate the user?",
-        "Does the repository contain data that imply vulnerabilities?",
-        "Does the repository include biometric categorization?",
-        "Does the repository contain real-time biometric identification?",
-        "Does the repository possess the capability of assessing techniques for recognizing the emotional state of a person?",
-        "Does the repository contain algorithms that can predict criminal behavior based on historical data?",
+            "Does the repository include models that can manipulate the user?",
+            "Does the repository contain data that imply vulnerabilities?",
+            "Does the repository include biometric categorization?",
+            "Does the repository contain real-time biometric identification?",
+            "Does the repository possess the capability of assessing techniques for recognizing the emotional state of a person?",
+            "Does the repository contain algorithms that can predict criminal behavior based on historical data?",
         ]
-       
 
-       
-
+        # Hier voer je de verwerkingslogica uit met je assistant_id en thread_id
+        assistant_id = 'asst_CbG44H0EMGkonjmBICzxm2Ef'
+        thread_id = 'thread_inCWbm6c69xJsL02legOeTgd'
         
-        try:
-            assistant_id = 'asst_CbG44H0EMGkonjmBICzxm2Ef'
-            thread_id = 'thread_inCWbm6c69xJsL02legOeTgd'
-            # return jsonify({'zip_file': zip_file , 'assistant.id':  assistant_id, 'thread.id': thread_id, 'questions': questions }), 200
-            analysis_results = process_repository(zip_file, assistant_id, thread_id, questions)
-            # format_results_readable(analysis_results)
-
-            # # Return results to the frontend
-            return analysis_results, 200
-        except Exception as e:
-            return jsonify({'error': f'An error occurred inside the final try block: {str(e)}'}), 500
-
+        # Call the function to process the repository
+        analysis_results = process_repository(filepath, assistant_id, thread_id, questions)
+        
+        # Return the analysis results as JSON
+        return jsonify(analysis_results), 200  # Format results properly before returning.
 
     except Exception as e:
+        print(f"An error occurred: {e}")
         return jsonify({'error': f'An error occurred: {str(e)}'}), 500
 
 if __name__ == '__main__':
